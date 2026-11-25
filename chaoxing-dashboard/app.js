@@ -345,7 +345,9 @@ async function loadQr() {
   setLoginStatus('正在获取二维码…');
   $('#loginQr').removeAttribute('src');
   try {
-    const res = await apiFetch('/api/login/qr', { cache: 'no-store' });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 25000);
+    const res = await apiFetch('/api/login/qr', { cache: 'no-store', signal: controller.signal }).finally(() => clearTimeout(timer));
     const body = await res.json().catch(() => ({}));
     if (!res.ok || !body.ok) throw new Error(body.error || '二维码获取失败');
     state.loginSession = body.sessionId;
@@ -353,7 +355,8 @@ async function loadQr() {
     setLoginStatus('请使用学习通 App 扫描二维码');
     state.loginPoll = setInterval(pollLogin, 1500);
   } catch (err) {
-    setLoginStatus('二维码获取失败：' + String(err && err.message || err));
+    const msg = String(err && err.message || err);
+    setLoginStatus('二维码加载失败' + (msg.indexOf('abort') >= 0 ? '（超时）' : '：' + msg) + '，请点「刷新二维码」重试，或改用「账号密码」登录');
   }
 }
 
