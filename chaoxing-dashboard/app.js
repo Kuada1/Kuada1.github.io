@@ -351,7 +351,7 @@ async function loadQr() {
     state.loginSession = body.sessionId;
     $('#loginQr').src = body.qr;
     setLoginStatus('请使用学习通 App 扫描二维码');
-    state.loginPoll = setInterval(pollLogin, 2000);
+    state.loginPoll = setInterval(pollLogin, 1500);
   } catch (err) {
     setLoginStatus('二维码获取失败：' + String(err && err.message || err));
   }
@@ -365,11 +365,20 @@ async function pollLogin() {
     if (body.status === 'success') {
       if (state.loginPoll) { clearInterval(state.loginPoll); state.loginPoll = null; }
       setLoginStatus('登录成功，正在刷新数据…', true);
-      setTimeout(() => { closeLoginModal(); loadData(true); }, 800);
+      setTimeout(() => {
+        closeLoginModal();
+        loadData(true).then(() => {
+          if (!state.data) showBanner('登录成功但读取失败', '已获取登录态，但作业数据读取失败，请稍后点「刷新数据」重试。');
+        });
+      }, 600);
       return;
     }
     if (body.status === 'scanned') setLoginStatus('已扫码，请在手机上点击「确认登录」', true);
-    else if (body.status === 'expired') { if (state.loginPoll) { clearInterval(state.loginPoll); state.loginPoll = null; } setLoginStatus('二维码已失效，请点击「刷新二维码」'); }
+    else if (body.status === 'expired') {
+      if (state.loginPoll) { clearInterval(state.loginPoll); state.loginPoll = null; }
+      setLoginStatus('二维码已失效，正在刷新…');
+      setTimeout(() => { if (!$('#loginModal').hidden) loadQr(); }, 800);
+    }
     else if (body.status === 'cancelled' || body.status === 'error') { if (state.loginPoll) { clearInterval(state.loginPoll); state.loginPoll = null; } setLoginStatus(body.message || '登录失败，请重试'); }
     else setLoginStatus(body.message || '等待扫码…');
   } catch { /* 网络抖动不打断轮询 */ }
