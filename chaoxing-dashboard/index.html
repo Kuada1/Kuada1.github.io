@@ -5,69 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>作业看板 / ASSIGNMENTS — 学习通</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="grid-lines" aria-hidden="true"></div>
+
   <div class="page">
     <header class="masthead">
       <div class="masthead__row">
-        <div class="wordmark"><span class="wordmark__mark" aria-hidden="true"></span><span>学习通 / XUEXITONG</span></div>
+        <div class="wordmark">
+          <span class="wordmark__mark" aria-hidden="true"></span>
+          <span>学习通 / XUEXITONG</span>
+        </div>
         <div class="masthead__meta">
           <span class="clock" id="clock">--</span>
-          <button class="btn" id="refreshBtn" type="button"><span>重新载入</span><span aria-hidden="true">↗</span></button>
+          <button class="btn btn--ghost" id="loginBtn" type="button">
+            <span>扫码登录</span>
+            <span aria-hidden="true">↗</span>
+          </button>
+          <button class="btn" id="refreshBtn" type="button">
+            <span>刷新数据</span>
+            <span aria-hidden="true">↗</span>
+          </button>
         </div>
       </div>
+
       <div class="masthead__title">
         <h1>作业<span>ASSIGNMENTS</span></h1>
         <div class="masthead__desc">
           <p>当前未截止作业 · 近期截止记录</p>
-          <p>数据由 GitHub Actions 定时同步</p>
+          <p>实时汇总自学习通，按截止时间排序</p>
           <p class="masthead__stamp" id="generatedAt">—</p>
         </div>
       </div>
+
       <div class="masthead__rule">
         <span><span class="red-block" aria-hidden="true"></span> DATA / CHAOXING</span>
         <span id="rangeNote">RECENT WINDOW — 14 DAYS</span>
       </div>
     </header>
 
-    <div class="banner" id="banner" hidden><strong id="bannerTitle">数据读取失败</strong><span id="bannerText"></span></div>
+    <div class="banner" id="banner" hidden>
+      <strong id="bannerTitle">数据读取失败</strong>
+      <span id="bannerText"></span>
+    </div>
 
     <section class="metrics" aria-label="统计概览">
-      <article class="metric metric--hero"><span class="label">进行中 / ACTIVE</span><span class="num" id="mActive">—</span><span class="sub">项未截止</span></article>
-      <article class="metric"><span class="label">待提交 / TO DO</span><span class="num" id="mPending">—</span><span class="sub">项尚未提交</span></article>
-      <article class="metric"><span class="label">今日截止 / TODAY</span><span class="num" id="mToday">—</span><span class="sub">项 24 小时内到期</span></article>
-      <article class="metric"><span class="label">已截止 / RECENT</span><span class="num" id="mRecent">—</span><span class="sub" id="mRecentSub">项近期记录</span></article>
+      <article class="metric metric--hero">
+        <span class="label">进行中 / ACTIVE</span>
+        <span class="num" id="mActive">—</span>
+        <span class="sub">项未截止</span>
+      </article>
+      <article class="metric">
+        <span class="label">待提交 / TO DO</span>
+        <span class="num" id="mPending">—</span>
+        <span class="sub">项尚未提交</span>
+      </article>
+      <article class="metric">
+        <span class="label">今日截止 / TODAY</span>
+        <span class="num" id="mToday">—</span>
+        <span class="sub">项 24 小时内到期</span>
+      </article>
+      <article class="metric">
+        <span class="label">已截止 / RECENT</span>
+        <span class="num" id="mRecent">—</span>
+        <span class="sub" id="mRecentSub">项近期记录</span>
+      </article>
     </section>
 
     <div class="toolbar">
       <div class="filters" id="courseFilters" aria-label="课程筛选"></div>
-      <div class="live" aria-hidden="true"><span class="live-dot"></span><span>SNAPSHOT</span></div>
+      <div class="live" aria-hidden="true"><span class="live-dot"></span><span>LIVE DATA</span></div>
     </div>
 
     <main class="layout">
       <section class="active-section" aria-labelledby="activeHeading">
-        <header class="section-header"><span class="section-index">01</span><h2 id="activeHeading">当前未截止</h2><span class="section-count" id="activeCount">—</span></header>
+        <header class="section-header">
+          <span class="section-index">01</span>
+          <h2 id="activeHeading">当前未截止</h2>
+          <span class="section-count" id="activeCount">—</span>
+        </header>
+
         <div class="active-list" id="activeList"></div>
-        <div class="empty" id="activeEmpty" hidden><span class="empty__num">00</span><p>当前没有未截止作业</p></div>
+        <div class="empty" id="activeEmpty" hidden>
+          <span class="empty__num">00</span>
+          <p>当前没有未截止作业</p>
+        </div>
+
         <section class="no-deadline" id="noDeadlineSection" hidden>
-          <header class="section-header section-header--small"><span class="section-index">01B</span><h2>无截止时间</h2><span class="section-count" id="noDeadlineCount">—</span></header>
+          <header class="section-header section-header--small">
+            <span class="section-index">01B</span>
+            <h2>无截止时间</h2>
+            <span class="section-count" id="noDeadlineCount">—</span>
+          </header>
           <div id="noDeadlineList"></div>
         </section>
       </section>
 
       <aside class="sidebar">
         <section class="recent-section" aria-labelledby="recentHeading">
-          <header class="section-header"><span class="section-index">02</span><h2 id="recentHeading">近期已截止</h2><span class="section-count" id="recentCount">—</span></header>
+          <header class="section-header">
+            <span class="section-index">02</span>
+            <h2 id="recentHeading">近期已截止</h2>
+            <span class="section-count" id="recentCount">—</span>
+          </header>
           <div class="window-switch" role="group" aria-label="近期时间范围">
             <button class="window-btn" data-days="7" type="button">7 天</button>
             <button class="window-btn is-active" data-days="14" type="button">14 天</button>
             <button class="window-btn" data-days="30" type="button">30 天</button>
           </div>
           <div class="recent-list" id="recentList"></div>
-          <div class="empty empty--small" id="recentEmpty" hidden><p>该时间范围内没有已截止作业</p></div>
+          <div class="empty empty--small" id="recentEmpty" hidden>
+            <p>该时间范围内没有已截止作业</p>
+          </div>
         </section>
+
         <section class="legend">
           <span class="legend__title">图例 / LEGEND</span>
           <span><i class="legend-dot legend-dot--red"></i>未提交</span>
@@ -78,11 +130,56 @@
     </main>
 
     <footer>
-      <span>学习通作业看板 · GITHUB PAGES</span>
-      <span>由 GitHub Actions 定时生成静态数据</span>
+      <span>学习通作业看板 · LOCAL DASHBOARD</span>
+      <span>数据每 5 分钟同步 · 页面每 60 秒刷新</span>
       <span id="footerTime">—</span>
     </footer>
   </div>
-  <script src="./app.js"></script>
+
+  <div class="login-modal" id="loginModal" hidden>
+    <div class="login-panel" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+      <header class="login-panel__head">
+        <span class="login-panel__index">LOGIN / 登录</span>
+        <button class="login-panel__close" id="loginClose" type="button" aria-label="关闭">×</button>
+      </header>
+      <div class="login-tabs">
+        <button class="login-tab is-active" data-tab="qr" type="button">扫码登录</button>
+        <button class="login-tab" data-tab="pwd" type="button">账号密码</button>
+      </div>
+      <div class="login-panel__body" id="loginQrPane">
+        <div class="login-qr">
+          <img id="loginQr" alt="学习通登录二维码" width="270" height="270">
+          <span class="login-qr__corner login-qr__corner--tl"></span>
+          <span class="login-qr__corner login-qr__corner--tr"></span>
+          <span class="login-qr__corner login-qr__corner--bl"></span>
+          <span class="login-qr__corner login-qr__corner--br"></span>
+        </div>
+        <div class="login-copy">
+          <h3 id="loginTitle">使用学习通 App 扫码</h3>
+          <p>打开学习通 → 右上角「扫一扫」→ 扫描左侧二维码 → 手机上点击「确认登录」。</p>
+          <p class="login-status" id="loginStatus">正在获取二维码…</p>
+          <button class="btn btn--small" id="loginRefresh" type="button">刷新二维码</button>
+          <p class="login-note">登录成功后会自动抓取完整 cookie 并刷新看板。二维码约 2 分钟有效，仅供本机使用。</p>
+        </div>
+      </div>
+      <div class="login-panel__body login-panel__body--pwd" id="loginPwdPane" hidden>
+        <div class="login-pwd">
+          <label class="login-field">
+            <span class="login-field__label">学号 / 手机号</span>
+            <input class="login-field__input" id="loginUser" type="text" autocomplete="username" placeholder="请输入学习通账号">
+          </label>
+          <label class="login-field">
+            <span class="login-field__label">密码</span>
+            <input class="login-field__input" id="loginPass" type="password" autocomplete="current-password" placeholder="请输入密码">
+          </label>
+          <button class="btn btn--small" id="loginSubmit" type="button">登录</button>
+          <p class="login-status" id="loginPwdStatus">账号密码只会发送给学习通官方接口，不会保存</p>
+          <p class="login-note">若学校开启新设备短信验证，账号密码登录会失败，请改用扫码登录。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
 </body>
 </html>
