@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>作业看板 / ASSIGNMENTS — 学习通</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="grid-lines" aria-hidden="true"></div>
+  <div class="page">
+    <header class="masthead">
+      <div class="masthead__row">
+        <div class="wordmark"><span class="wordmark__mark" aria-hidden="true"></span><span>学习通 / XUEXITONG</span></div>
+        <div class="masthead__meta">
+          <span class="clock" id="clock">--</span>
+          <button class="btn" id="refreshBtn" type="button"><span>重新载入</span><span aria-hidden="true">↗</span></button>
+        </div>
+      </div>
+      <div class="masthead__title">
+        <h1>作业<span>ASSIGNMENTS</span></h1>
+        <div class="masthead__desc">
+          <p>当前未截止作业 · 近期截止记录</p>
+          <p>数据由 GitHub Actions 定时同步</p>
+          <p class="masthead__stamp" id="generatedAt">—</p>
+        </div>
+      </div>
+      <div class="masthead__rule">
+        <span><span class="red-block" aria-hidden="true"></span> DATA / CHAOXING</span>
+        <span id="rangeNote">RECENT WINDOW — 14 DAYS</span>
+      </div>
+    </header>
+
+    <div class="banner" id="banner" hidden><strong id="bannerTitle">数据读取失败</strong><span id="bannerText"></span></div>
+
+    <section class="metrics" aria-label="统计概览">
+      <article class="metric metric--hero"><span class="label">进行中 / ACTIVE</span><span class="num" id="mActive">—</span><span class="sub">项未截止</span></article>
+      <article class="metric"><span class="label">待提交 / TO DO</span><span class="num" id="mPending">—</span><span class="sub">项尚未提交</span></article>
+      <article class="metric"><span class="label">今日截止 / TODAY</span><span class="num" id="mToday">—</span><span class="sub">项 24 小时内到期</span></article>
+      <article class="metric"><span class="label">已截止 / RECENT</span><span class="num" id="mRecent">—</span><span class="sub" id="mRecentSub">项近期记录</span></article>
+    </section>
+
+    <div class="toolbar">
+      <div class="filters" id="courseFilters" aria-label="课程筛选"></div>
+      <div class="live" aria-hidden="true"><span class="live-dot"></span><span>SNAPSHOT</span></div>
+    </div>
+
+    <main class="layout">
+      <section class="active-section" aria-labelledby="activeHeading">
+        <header class="section-header"><span class="section-index">01</span><h2 id="activeHeading">当前未截止</h2><span class="section-count" id="activeCount">—</span></header>
+        <div class="active-list" id="activeList"></div>
+        <div class="empty" id="activeEmpty" hidden><span class="empty__num">00</span><p>当前没有未截止作业</p></div>
+        <section class="no-deadline" id="noDeadlineSection" hidden>
+          <header class="section-header section-header--small"><span class="section-index">01B</span><h2>无截止时间</h2><span class="section-count" id="noDeadlineCount">—</span></header>
+          <div id="noDeadlineList"></div>
+        </section>
+      </section>
+
+      <aside class="sidebar">
+        <section class="recent-section" aria-labelledby="recentHeading">
+          <header class="section-header"><span class="section-index">02</span><h2 id="recentHeading">近期已截止</h2><span class="section-count" id="recentCount">—</span></header>
+          <div class="window-switch" role="group" aria-label="近期时间范围">
+            <button class="window-btn" data-days="7" type="button">7 天</button>
+            <button class="window-btn is-active" data-days="14" type="button">14 天</button>
+            <button class="window-btn" data-days="30" type="button">30 天</button>
+          </div>
+          <div class="recent-list" id="recentList"></div>
+          <div class="empty empty--small" id="recentEmpty" hidden><p>该时间范围内没有已截止作业</p></div>
+        </section>
+        <section class="legend">
+          <span class="legend__title">图例 / LEGEND</span>
+          <span><i class="legend-dot legend-dot--red"></i>未提交</span>
+          <span><i class="legend-dot legend-dot--black"></i>已提交</span>
+          <span><i class="legend-dot legend-dot--gray"></i>审批状态独立显示</span>
+        </section>
+      </aside>
+    </main>
+
+    <footer>
+      <span>学习通作业看板 · GITHUB PAGES</span>
+      <span>由 GitHub Actions 定时生成静态数据</span>
+      <span id="footerTime">—</span>
+    </footer>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
