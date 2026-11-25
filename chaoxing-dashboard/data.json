@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-11-25T01:27:32.801Z",
+  "generatedAt": "2026-11-25T04:43:52.725Z",
   "source": "github-actions",
   "courseCount": 14,
   "works": [
@@ -301,8 +301,8 @@
       "type": "exam",
       "publishAt": 1795071600000,
       "publishText": "11-19 15:00",
-      "deadline": 1795449540000,
-      "deadlineText": "11-23 23:59",
+      "deadline": 1795967940000,
+      "deadlineText": "11-29 23:59",
       "statusCode": 3,
       "statusText": "已完成",
       "submitted": true,
