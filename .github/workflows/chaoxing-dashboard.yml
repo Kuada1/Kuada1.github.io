@@ -1,0 +1,54 @@
+name: Update Chaoxing Dashboard
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chaoxing-dashboard
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore cookie cache
+        uses: actions/cache@v4
+        with:
+          path: chaoxing-dashboard/.cache
+          key: chaoxing-cookies-${{ github.run_id }}
+          restore-keys: |
+            chaoxing-cookies-
+
+      - name: Fetch data
+        env:
+          CHAOXING_USERNAME: ${{ secrets.CHAOXING_USERNAME }}
+          CHAOXING_PASSWORD: ${{ secrets.CHAOXING_PASSWORD }}
+          COOKIES_JSON: ${{ secrets.COOKIES_JSON }}
+        run: node chaoxing-dashboard/scripts/fetch.mjs
+
+      - name: Commit data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f chaoxing-dashboard/data.json ]; then
+            git add chaoxing-dashboard/data.json
+            if ! git diff --cached --quiet; then
+              git commit -m "chore(chaoxing): update dashboard data $(date -u +%Y-%m-%dT%H:%MZ)"
+              git push
+            else
+              echo "no changes"
+            fi
+          fi
