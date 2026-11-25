@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '*/30 * * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - 'chaoxing-dashboard/**'
 
 permissions:
   contents: write
