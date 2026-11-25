@@ -2,6 +2,51 @@
 'use strict';
 
 const API_BASE = 'https://chaoxing-api.pages.dev';
+const TOKEN_KEY = 'cx_auth_token';
+const DEVICE_KEY = 'cx_device_id';
+let authToken = '';
+try { authToken = localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { authToken = ''; }
+
+function deviceId() {
+  try {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(16).slice(2));
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  } catch (e) { return 'fallback-' + Date.now(); }
+}
+
+async function ensureToken(force) {
+  if (authToken && !force) return authToken;
+  const res = await fetch(API_BASE + '/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ deviceId: deviceId() }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (body && body.ok && body.token) {
+    authToken = body.token;
+    try { localStorage.setItem(TOKEN_KEY, authToken); } catch (e) {}
+  }
+  return authToken;
+}
+
+async function apiFetch(path, options) {
+  const opts = options || {};
+  let token = await ensureToken(false);
+  const call = () => fetch(API_BASE + path, Object.assign({}, opts, { headers: Object.assign({}, opts.headers || {}, { 'X-Auth-Token': token }) }));
+  let res = await call();
+  if (res.status === 401) {
+    const body = await res.clone().json().catch(() => ({}));
+    if (body && body.code === 'AUTH_REQUIRED') {
+      token = await ensureToken(true);
+      res = await call();
+    }
+  }
+  return res;
+}
 
 const state = {
   data: null,
@@ -250,8 +295,8 @@ async function loadData(force) {
   btn.disabled = true;
   btn.querySelector('span').textContent = '同步中';
   try {
-    const url = API_BASE + '/api/assignments?days=' + state.days + (force ? '&refresh=1' : '');
-    const res = await fetch(url, { cache: 'no-store' });
+    const url = '/api/assignments?days=' + state.days + (force ? '&refresh=1' : '');
+    const res = await apiFetch(url, { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
     if (!res.ok || body.ok === false) {
       const msg = body.error || ('HTTP ' + res.status);
@@ -300,7 +345,7 @@ async function loadQr() {
   setLoginStatus('正在获取二维码…');
   $('#loginQr').removeAttribute('src');
   try {
-    const res = await fetch(API_BASE + '/api/login/qr', { cache: 'no-store' });
+    const res = await apiFetch('/api/login/qr', { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
     if (!res.ok || !body.ok) throw new Error(body.error || '二维码获取失败');
     state.loginSession = body.sessionId;
@@ -315,7 +360,7 @@ async function loadQr() {
 async function pollLogin() {
   if (!state.loginSession) return;
   try {
-    const res = await fetch(API_BASE + '/api/login/status?session=' + encodeURIComponent(state.loginSession), { cache: 'no-store' });
+    const res = await apiFetch('/api/login/status?session=' + encodeURIComponent(state.loginSession), { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
     if (body.status === 'success') {
       if (state.loginPoll) { clearInterval(state.loginPoll); state.loginPoll = null; }
@@ -353,7 +398,7 @@ async function submitPassword() {
   status.textContent = '正在登录…';
   status.classList.remove('is-ok');
   try {
-    const res = await fetch(API_BASE + '/api/login/password', {
+    const res = await apiFetch('/api/login/password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
