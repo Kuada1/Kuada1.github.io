@@ -429,7 +429,7 @@ async function submitPassword() {
 
 function openLoginModal() {
   $('#loginModal').hidden = false;
-  switchLoginTab('qr');
+  switchLoginTab('pwd');
 }
 
 function startClock() {
