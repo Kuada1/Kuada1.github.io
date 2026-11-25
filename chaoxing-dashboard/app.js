@@ -1,7 +1,7 @@
 /* 学习通作业看板 · 前端 */
 'use strict';
 
-const API_BASE = 'https://chaoxing-api.pages.dev';
+const API_BASE = 'https://bianzihaoisgay.icu';
 const TOKEN_KEY = 'cx_auth_token';
 const DEVICE_KEY = 'cx_device_id';
 let authToken = '';
